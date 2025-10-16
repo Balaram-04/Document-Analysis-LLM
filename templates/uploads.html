@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Document | Intelligent Document Analyzer</title>
+  <link href="https://cdn.jsdelivr.net/npm/mini.css@3.0.1/dist/mini-default.min.css" rel="stylesheet">
+  <style>
+    body { background: #f5f7fa; }
+    .container { max-width: 600px; margin: 5% auto; padding: 2rem; background: #fff; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
+    h2 { text-align: center; margin-bottom: 1.5rem; }
+    .file-input { width: 100%; padding: 0.5rem; border: 2px dashed #aaa; border-radius: 8px; background: #fafafa; text-align: center; }
+    .file-input:hover { border-color: #007bff; }
+    button { width: 100%; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Upload Your Document</h2>
+    <form id="uploadForm" action="{% url 'upload_document' %}" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input type="file" name="document" id="document" class="file-input" accept=".pdf,.docx" required>
+      <small style="display:block;margin-top:0.5rem;color:#888;">Only .pdf or .docx files are allowed (Max size 10 MB)</small>
+      <button type="submit" class="primary">Upload & Extract</button>
+    </form>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById('document');
+    const form = document.getElementById('uploadForm');
+
+    form.addEventListener('submit', e => {
+      const file = fileInput.files[0];
+      if (!file) {
+        alert("Please select a document.");
+        e.preventDefault();
+        return;
+      }
+      const allowed = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      if (!allowed.includes(file.type)) {
+        alert("Only .pdf or .docx files are allowed.");
+        e.preventDefault();
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) { // 10 MB limit
+        alert("File is too large! Max 10 MB allowed.");
+        e.preventDefault();
+      }
+    });
+  </script>
+</body>
+</html>
